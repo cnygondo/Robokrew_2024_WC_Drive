@@ -1,11 +1,13 @@
+import rev
 import wpilib.drive as wpdrive
 from wpilib import RobotBase
 from rev import SparkRelativeEncoder
 from rev import CANSparkMax
 import constants
 
+
 class Drivetrain:
-    #initializing motors: there are only 4 motors so 1 lead motor and 1 follow motor per side
+#initializing motors: there are only 4 motors so 1 lead motor and 1 follow motor per side
     leftLeadMotor: CANSparkMax
     rightLeadMotor: CANSparkMax
 
@@ -15,41 +17,44 @@ class Drivetrain:
     fwdSpeed: float = 0.0
     turnSpeed: float = 0.0
     currentSpeed: float = 0.0
-    
-    
-#when the robot starts up, define which motors are which and their orientation
+       
+#When the robot starts up, define which motors are which and their orientation. #Setup Defaults
     def setup(self):
 
-        #Setup Defaults
+#Left side of the chassis      
+        self.leftLeadMotor = CANSparkMax(constants.LEFT_DRIVE_MOTOR_LEADER_CAN_ID, rev.CANSparkMax.MotorType.kBrushless)
         self.leftLeadMotor.restoreFactoryDefaults()
-        #self.leftLeadMotor.setSmartCurrentLimit(constants.PEAK_MOTOR_AMPS)
+        self.leftLeadMotor.setSmartCurrentLimit(constants.PEAK_MOTOR_AMPS)
         self.leftLeadMotor.setInverted(constants.LEFT_INVERTED) #FALSE
         self.leftLeadMotor.setIdleMode(CANSparkMax.IdleMode.kBrake)
         #self.leftLeadMotor.setOpenLoopRampRate(constants.RAMP_RATE)
 
+        self.leftFollowMotor1 = CANSparkMax(constants.LEFT_DRIVE_MOTOR_FOLLOWER1_CAN_ID, rev.CANSparkMax.MotorType.kBrushless)
         self.leftFollowMotor1.restoreFactoryDefaults()
-        #self.leftFollowMotor1.setSmartCurrentLimit(constants.PEAK_MOTOR_AMPS)
+        self.leftFollowMotor1.setSmartCurrentLimit(constants.PEAK_MOTOR_AMPS)
         self.leftFollowMotor1.setInverted(constants.LEFT_INVERTED)
         self.leftFollowMotor1.follow(self.leftLeadMotor)
         self.leftFollowMotor1.setIdleMode(CANSparkMax.IdleMode.kBrake)
         #self.leftFollowMotor1.setOpenLoopRampRate(constants.RAMP_RATE)
         
-
+#Right side of the chassis
+        self.rightLeadMotor = CANSparkMax(constants.RIGHT_DRIVE_MOTOR_LEADER_CAN_ID, rev.CANSparkMax.MotorType.kBrushless)
         self.rightLeadMotor.restoreFactoryDefaults()
-        #self.rightLeadMotor.setSmartCurrentLimit(constants.PEAK_MOTOR_AMPS)
+        self.rightLeadMotor.setSmartCurrentLimit(constants.PEAK_MOTOR_AMPS)
         self.rightLeadMotor.setInverted(constants.RIGHT_INVERTED)
         self.rightLeadMotor.setIdleMode(CANSparkMax.IdleMode.kBrake)
         #self.rightLeadMotor.setOpenLoopRampRate(constants.RAMP_RATE)
 
-        
+
+        self.rightFollowMotor1 = CANSparkMax(constants.RIGHT_DRIVE_MOTOR_FOLLOWER1_CAN_ID, rev.CANSparkMax.MotorType.kBrushless) 
         self.rightFollowMotor1.restoreFactoryDefaults()
-        #self.rightFollowMotor1.setSmartCurrentLimit(constants.PEAK_MOTOR_AMPS)
+        self.rightFollowMotor1.setSmartCurrentLimit(constants.PEAK_MOTOR_AMPS)
         self.rightFollowMotor1.setInverted(constants.RIGHT_INVERTED)
         self.rightFollowMotor1.follow(self.rightLeadMotor)
         self.rightFollowMotor1.setIdleMode(CANSparkMax.IdleMode.kBrake)
         #self.rightFollowMotor1.setOpenLoopRampRate(constants.RAMP_RATE)
         
-
+#Encoder Stuff
         self.leftEncoder = self.leftLeadMotor.getEncoder(SparkRelativeEncoder.Type.kHallSensor,countsPerRev=constants.DRIVE_ENCODER_TICKS_PER_REV)
         self.leftEncoder.setPosition(0.0)
 
@@ -57,7 +62,6 @@ class Drivetrain:
         self.rightEncoder.setPosition(0.0)
 
 
-        
         self.diffDrive = wpdrive.DifferentialDrive(self.leftLeadMotor, self.rightLeadMotor)
 
     def setMotorSpeeds(self,desiredSpeed,turnSpeed):
